@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mapek</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styleMine.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <script
+      defer
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script defer src="app.js"></script>
+  </head>
+  <body>
+    <div class="app">
+      <div class="menu">
+        <div class="logo">
+          <img class="logo-img" src="logo.png" alt="logo of mapty" />
+        </div>
+        <div class="workout-container">
+          <div class="form hidden">
+            <form class="workout-form">
+              <label class="workout-label" for="">Type</label>
+              <select class="workout-input" name="" id="">
+                <option value="running">Running</option>
+                <option value="cycling">Cycling</option>
+              </select>
+              <label class="workout-label" for="">Distance</label>
+              <input class="workout-input" type="text" placeholder="km" />
+              <label class="workout-label" for="">Duration</label>
+              <input class="workout-input" type="text" placeholder="min" />
+              <label class="workout-label" for="">Cadence</label>
+              <input class="workout-input" type="text" placeholder="step/min" />
+            </form>
+          </div>
+          <div class="workout workout-running">
+            <p class="workout-text">
+              Running on <span class="workout-date">April 14</span>
+            </p>
+            <div class="workout-stats">
+              <div class="workout-stats-container">
+                <p class="workout-stat">
+                  <span class="workout-icon">🏃‍♂️</span
+                  ><span class="workout-value">5.2</span>
+                  <span class="workout-unit">KM</span>
+                </p>
+              </div>
+              <div class="workout-stat">
+                <p class="workout-stat">
+                  <span class="workout-icon">⏱</span
+                  ><span class="workout-value">24</span>
+                  <span class="workout-unit">MIN</span>
+                </p>
+              </div>
+              <div class="workout-stat">
+                <p class="workout-stat">
+                  <span class="workout-icon">⚡</span
+                  ><span class="workout-value">4.6</span>
+                  <span class="workout-unit">MIN/H</span>
+                </p>
+              </div>
+              <div class="workout-stat">
+                <p class="workout-stat">
+                  <span class="workout-icon">🦶</span
+                  ><span class="workout-value">178</span>
+                  <span class="workout-unit">SPM</span>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="workout workout-cycling">
+            <p class="workout-text">
+              Cycling on <span class="workout-date">April 5</span>
+            </p>
+            <div class="workout-stats">
+              <div class="workout-stats-container">
+                <p class="workout-stat">
+                  <span class="workout-icon">🚴‍♂️</span
+                  ><span class="workout-value">27</span>
+                  <span class="workout-unit">KM</span>
+                </p>
+              </div>
+              <div class="workout-stat">
+                <p class="workout-stat">
+                  <span class="workout-icon">⏱</span
+                  ><span class="workout-value">95</span>
+                  <span class="workout-unit">MIN</span>
+                </p>
+              </div>
+              <div class="workout-stat">
+                <p class="workout-stat">
+                  <span class="workout-icon">⚡</span
+                  ><span class="workout-value">16</span>
+                  <span class="workout-unit">KM/H</span>
+                </p>
+              </div>
+              <div class="workout-stat">
+                <p class="workout-stat">
+                  <span class="workout-icon">⛰</span
+                  ><span class="workout-value">223</span>
+                  <span class="workout-unit">M</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <p class="copyright-text">
+            &copy; Copyright by
+            <span class="author-name">Jonas Schmedtmann</span>. Use for learning
+            or your portfolio. Don't use to teach. Don't claim as your own.
+          </p>
+        </div>
+      </div>
+      <div class="map" id="map"></div>
+    </div>
+  </body>
+</html>
