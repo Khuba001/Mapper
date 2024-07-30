@@ -33,16 +33,39 @@
           <div class="form hidden">
             <form class="workout-form">
               <label class="workout-label" for="">Type</label>
-              <select class="workout-input" name="" id="">
+              <select class="workout-input input-select" name="" id="">
                 <option value="running">Running</option>
                 <option value="cycling">Cycling</option>
               </select>
               <label class="workout-label" for="">Distance</label>
-              <input class="workout-input" type="text" placeholder="km" />
+              <input
+                class="workout-input input-distance"
+                type="text"
+                placeholder="km"
+              />
               <label class="workout-label" for="">Duration</label>
-              <input class="workout-input" type="text" placeholder="min" />
-              <label class="workout-label" for="">Cadence</label>
-              <input class="workout-input" type="text" placeholder="step/min" />
+              <input
+                class="workout-input input-duration"
+                type="text"
+                placeholder="min"
+              />
+              <label class="workout-label cadence-label" for="">Cadence</label>
+              <input
+                class="workout-input input-cadence"
+                type="text"
+                placeholder="step/min"
+              />
+
+              <label class="workout-label elevation-label hidden" for=""
+                >Elevation</label
+              >
+              <input
+                class="workout-input input-elevation hidden"
+                type="text"
+                placeholder="m"
+              />
+
+              <button class="form__btn">OK</button>
             </form>
           </div>
           <div class="workout workout-running">
