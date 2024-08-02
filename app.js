@@ -21,10 +21,11 @@ const inputDuration = document.querySelector(".input-duration");
 const inputCadence = document.querySelector(".input-cadence");
 const inputElevation = document.querySelector(".input-elevation");
 const formSelect = document.querySelector(".input-select");
+const workoutContainer = document.querySelector(".workout-container");
 
 class Workout {
   date = new Date();
-  id = (Date().now + "").slice(-10);
+  id = (Date.now() + "").slice(-10);
   constructor(coords, distance, duration) {
     this.coords = coords; //arr
     this.distance = distance; // in km
@@ -33,6 +34,7 @@ class Workout {
 }
 
 class Running extends Workout {
+  type = "running";
   constructor(coords, distance, duration, cadence) {
     super(coords, distance, duration);
     this.cadence = cadence;
@@ -46,6 +48,7 @@ class Running extends Workout {
 }
 
 class Cycling extends Workout {
+  type = "cycling";
   constructor(coords, distance, duration, elevationGain) {
     super(coords, distance, duration);
     this.elevationGain = elevationGain;
@@ -138,7 +141,7 @@ class App {
       )
         return alert("Inputs have to be positive numbers");
 
-      const workout = new Running([lat, lng], distance, duration, cadence);
+      workout = new Running([lat, lng], distance, duration, cadence);
     }
 
     if (type === "cycling") {
@@ -149,12 +152,41 @@ class App {
         !allPositive(distance, duration)
       )
         return alert("Inputs have to be positive numbers");
-      const workout = new Cycling([lat, lng], distance, duration, elevation);
+      workout = new Cycling([lat, lng], distance, duration, elevation);
     }
 
     this.#workouts.push(workout);
+    console.log(workout);
 
-    L.marker([lat, lng])
+    this.#renderWorkoutMarker(workout);
+
+    this.#renderWorkout(workout);
+
+    // clear all the input fields of the form
+    inputCadence.value =
+      inputDistance.value =
+      inputDuration.value =
+      inputElevation.value =
+        "";
+
+    // hide a form after creating a workout
+    form.classList.add("hidden");
+  }
+
+  #renderWorkoutMarker(workout) {
+    // Helper function for formatting the popup string
+    const formatString = () => {
+      // return a string for displaying
+      return `${
+        // check workouts type
+        workout.type === "running"
+          ? // create a string depending on the workout type, use formatDate function that returns a date in a proper form
+            `🏃‍♂️ Running on ${this.formatDate(workout)}`
+          : `🚴‍♂️ Cycling on ${this.formatDate(workout)}`
+      }`;
+    };
+
+    L.marker(workout.coords)
       .addTo(this.#map)
       .bindPopup(
         L.popup({
@@ -162,17 +194,107 @@ class App {
           minWidth: 100,
           autoClose: false,
           closeOnClick: false,
-          classList: "running-popup",
+          className: `${workout.type}-popup`,
         })
       )
-      .setPopupContent("Workout")
+      .setPopupContent(formatString())
       .openPopup();
+  }
 
-    inputCadence.value =
-      inputDistance.value =
-      inputDuration.value =
-      inputElevation.value =
-        "";
+  #renderWorkout(workout) {
+    // create a html markup of the workout
+    let markup =
+      //  use tertiary operator to determine if its a running workout or cycling, add workout values
+      workout.type === "running"
+        ? `<div class="workout workout-running">
+            <p class="workout-text">
+              Running on <span class="workout-date">${this.formatDate(
+                workout
+              )}</span>
+            </p>
+            <div class="workout-stats">
+              <div class="workout-stats-container">
+                <p class="workout-stat">
+                  <span class="workout-icon">🏃‍♂️</span
+                  ><span class="workout-value">${workout.distance}</span>
+                  <span class="workout-unit">KM</span>
+                </p>
+              </div>
+              <div class="workout-stat">
+                <p class="workout-stat">
+                  <span class="workout-icon">⏱</span
+                  ><span class="workout-value">${workout.duration}</span>
+                  <span class="workout-unit">MIN</span>
+                </p>
+              </div>
+              <div class="workout-stat">
+                <p class="workout-stat">
+                  <span class="workout-icon">⚡</span
+                  ><span class="workout-value">${workout.cadence}</span>
+                  <span class="workout-unit">MIN/H</span>
+                </p>
+              </div>
+              <div class="workout-stat">
+                <p class="workout-stat">
+                  <span class="workout-icon">🦶</span
+                  ><span class="workout-value">${workout.pace}</span>
+                  <span class="workout-unit">SPM</span>
+                </p>
+              </div>
+            </div>
+          </div>`
+        : `          <div class="workout workout-cycling">
+            <p class="workout-text">
+              Cycling on <span class="workout-date">${this.formatDate(
+                workout
+              )}</span>
+            </p>
+            <div class="workout-stats">
+              <div class="workout-stats-container">
+                <p class="workout-stat">
+                  <span class="workout-icon">🚴‍♂️</span
+                  ><span class="workout-value">${workout.distance}</span>
+                  <span class="workout-unit">KM</span>
+                </p>
+              </div>
+              <div class="workout-stat">
+                <p class="workout-stat">
+                  <span class="workout-icon">⏱</span
+                  ><span class="workout-value">${workout.duration}</span>
+                  <span class="workout-unit">MIN</span>
+                </p>
+              </div>
+              <div class="workout-stat">
+                <p class="workout-stat">
+                  <span class="workout-icon">⚡</span
+                  ><span class="workout-value">${workout.speed}</span>
+                  <span class="workout-unit">KM/H</span>
+                </p>
+              </div>
+              <div class="workout-stat">
+                <p class="workout-stat">
+                  <span class="workout-icon">⛰</span
+                  ><span class="workout-value">${workout.elevationGain}</span>
+                  <span class="workout-unit">M</span>
+                </p>
+              </div>
+            </div>
+          </div>`;
+
+    // add created html element to the workout container with to option 'beforeend'
+    workoutContainer.insertAdjacentHTML("beforeend", markup);
+  }
+  // Helper function which formats the date for displaying
+  formatDate(workout) {
+    // get month, set the formatting to users locale and set the month displaying to full name
+    // dont have to add +1 to the month because toLocaleDateString already returns proper month
+    let month = workout.date.toLocaleDateString(navigator.language, {
+      month: "long",
+    });
+    // create a day var
+    let day = workout.date.getDate();
+    // return the formatted string for displaying it in the workout
+    return `${month} ${day}`;
   }
 }
 
