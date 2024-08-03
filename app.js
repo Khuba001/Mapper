@@ -1,20 +1,5 @@
 "use strict";
 
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
 const form = document.querySelector(".form");
 const inputDistance = document.querySelector(".input-distance");
 const inputDuration = document.querySelector(".input-duration");
@@ -63,12 +48,14 @@ class Cycling extends Workout {
 
 class App {
   #map;
+  #mapZoomLevel = 13;
   #mapEvent;
   #workouts = [];
   constructor() {
     this.#getPostion();
     form.addEventListener("submit", this.#newWorkout.bind(this));
     formSelect.addEventListener("change", this.#toggleElevatationField);
+    workoutContainer.addEventListener("click", this.#moveToPopup.bind(this));
   }
 
   #getPostion() {
@@ -86,7 +73,7 @@ class App {
 
     const coords = [latitude, longitude];
 
-    this.#map = L.map("map").setView(coords, 13);
+    this.#map = L.map("map").setView(coords, this.#mapZoomLevel);
 
     L.tileLayer("https://tile.openstreetmap.fr/hot//{z}/{x}/{y}.png", {
       attribution:
@@ -162,15 +149,7 @@ class App {
 
     this.#renderWorkout(workout);
 
-    // clear all the input fields of the form
-    inputCadence.value =
-      inputDistance.value =
-      inputDuration.value =
-      inputElevation.value =
-        "";
-
-    // hide a form after creating a workout
-    form.classList.add("hidden");
+    this.#hideForm();
   }
 
   #renderWorkoutMarker(workout) {
@@ -206,7 +185,7 @@ class App {
     let markup =
       //  use tertiary operator to determine if its a running workout or cycling, add workout values
       workout.type === "running"
-        ? `<div class="workout workout-running">
+        ? `<div class="workout workout-running" data-id="${workout.id}">
             <p class="workout-text">
               Running on <span class="workout-date">${this.formatDate(
                 workout
@@ -243,7 +222,9 @@ class App {
               </div>
             </div>
           </div>`
-        : `          <div class="workout workout-cycling">
+        : `          <div class="workout workout-cycling"  data-id="${
+            workout.id
+          }">
             <p class="workout-text">
               Cycling on <span class="workout-date">${this.formatDate(
                 workout
@@ -281,7 +262,7 @@ class App {
             </div>
           </div>`;
 
-    // add created html element to the workout container with to option 'beforeend'
+    // add created html element to the workout container with the option 'beforeend'
     workoutContainer.insertAdjacentHTML("beforeend", markup);
   }
   // Helper function which formats the date for displaying
@@ -295,6 +276,30 @@ class App {
     let day = workout.date.getDate();
     // return the formatted string for displaying it in the workout
     return `${month} ${day}`;
+  }
+  #moveToPopup(e) {
+    // in this method we are using this keyword so its necessary to do .bind(this) on event listener
+    // find parent element with .workout class
+    const workoutEl = e.target.closest(".workout");
+    // guard clause
+    if (!workoutEl) return;
+    // find an object that matches id with element that we clicked on
+    const workout = this.#workouts.find(
+      (work) => work.id === workoutEl.dataset.id
+    );
+    // set users view on the pin
+    this.#map.setView(workout.coords, this.#mapZoomLevel);
+  }
+  #hideForm() {
+    // clear all the input fields of the form
+    inputCadence.value =
+      inputDistance.value =
+      inputDuration.value =
+      inputElevation.value =
+        "";
+
+    // hide a form after creating a workout
+    form.classList.add("hidden");
   }
 }
 
