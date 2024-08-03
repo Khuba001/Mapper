@@ -60,6 +60,13 @@ body {
   overflow: hidden;
 }
 
+.workout-options {
+  position: absolute;
+  top: 20%;
+  right: 5%;
+  cursor: pointer;
+}
+
 .workout-stats {
   display: flex;
   gap: 2rem;

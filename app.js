@@ -7,6 +7,9 @@ const inputCadence = document.querySelector(".input-cadence");
 const inputElevation = document.querySelector(".input-elevation");
 const formSelect = document.querySelector(".input-select");
 const workoutContainer = document.querySelector(".workout-container");
+const workoutElement = document.querySelector(".workout");
+
+const workoutRemover = document.querySelector(".workout-delete");
 
 class Workout {
   date = new Date();
@@ -56,6 +59,7 @@ class App {
     form.addEventListener("submit", this.#newWorkout.bind(this));
     formSelect.addEventListener("change", this.#toggleElevatationField);
     workoutContainer.addEventListener("click", this.#moveToPopup.bind(this));
+    workoutContainer.addEventListener("click", this.#removeWorkout.bind(this));
   }
 
   #getPostion() {
@@ -191,6 +195,9 @@ class App {
                 workout
               )}</span>
             </p>
+            <div class='workout-options'>
+              <div class='workout-delete'>❌</div>
+            </div>
             <div class="workout-stats">
               <div class="workout-stats-container">
                 <p class="workout-stat">
@@ -230,6 +237,9 @@ class App {
                 workout
               )}</span>
             </p>
+            <div class='workout-options'>
+              <div class='workout-delete'>❌</div>
+            </div>
             <div class="workout-stats">
               <div class="workout-stats-container">
                 <p class="workout-stat">
@@ -300,6 +310,21 @@ class App {
 
     // hide a form after creating a workout
     form.classList.add("hidden");
+  }
+  // removeworkout still to do: remove marker
+  #removeWorkout(e) {
+    e.stopPropagation();
+    if (e.target.classList.contains("workout-delete")) {
+      const workoutEl = e.target.closest(".workout");
+      if (!workoutEl) return;
+
+      // Pobierz ID treningu z atrybutu data-id
+      const workoutId = workoutEl.dataset.id;
+      workoutEl.remove();
+      this.#workouts = this.#workouts.filter(
+        (workout) => workout.id !== workoutId
+      );
+    }
   }
 }
 
