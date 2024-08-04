@@ -8,6 +8,7 @@ const inputElevation = document.querySelector(".input-elevation");
 const formSelect = document.querySelector(".input-select");
 const workoutContainer = document.querySelector(".workout-container");
 const workoutElement = document.querySelector(".workout");
+const removeAll = document.querySelector(".remove-all");
 
 const workoutRemover = document.querySelector(".workout-delete");
 
@@ -60,6 +61,9 @@ class App {
     formSelect.addEventListener("change", this.#toggleElevatationField);
     workoutContainer.addEventListener("click", this.#moveToPopup.bind(this));
     workoutContainer.addEventListener("click", this.#removeWorkout.bind(this));
+    workoutContainer.addEventListener("click", this.#removeWorkout.bind(this));
+    workoutContainer.addEventListener("click", this.#editWorkout.bind(this));
+    removeAll.addEventListener("click", this.#removeAll.bind(this));
   }
 
   #getPostion() {
@@ -197,6 +201,7 @@ class App {
             </p>
             <div class='workout-options'>
               <div class='workout-delete'>❌</div>
+              <div class='workout-edit'>📜</div>
             </div>
             <div class="workout-stats">
               <div class="workout-stats-container">
@@ -239,6 +244,7 @@ class App {
             </p>
             <div class='workout-options'>
               <div class='workout-delete'>❌</div>
+              <div class='workout-edit'>📜</div>
             </div>
             <div class="workout-stats">
               <div class="workout-stats-container">
@@ -313,20 +319,54 @@ class App {
   }
   // removeworkout still to do: remove marker
   #removeWorkout(e) {
+    // stop propagation, so moveToPopup dont activate
     e.stopPropagation();
+    // if ❌ is clicked then do:
     if (e.target.classList.contains("workout-delete")) {
+      // create a variable and put into it the workout element that clicked ❌ is located in
       const workoutEl = e.target.closest(".workout");
+      // guard clause
       if (!workoutEl) return;
 
-      // Pobierz ID treningu z atrybutu data-id
-      const workoutId = workoutEl.dataset.id;
-      workoutEl.remove();
+      // update #workouts array with the ones that do not match the condition, and delete the one that matches it
       this.#workouts = this.#workouts.filter(
-        (workout) => workout.id !== workoutId
+        (workout) => workout.id !== workoutEl.dataset.id
       );
+      // remove the element from the DOM
+      workoutEl.remove();
+    }
+  }
+  #editWorkout(e) {
+    e.stopPropagation();
+
+    const workoutEl = e.target.closest(".workout");
+    if (!workoutEl || !e.target.classList.contains("workout-edit")) return;
+    console.log(workoutEl);
+    const workout = this.#workouts.find(
+      (work) => workoutEl.dataset.id === work.id
+    );
+    form.classList.remove("hidden");
+
+    inputDistance.value = workout.distance;
+    inputDuration.value = workout.duration;
+    formSelect.value = workout.type;
+    if (workout.type === "running") {
+      inputCadence.value = workout.cadence;
+      inputElevation.value = "";
+    }
+    if (workout.type === "cycling") {
+      inputElevation.value = workout.elevationGain;
+      inputCadence.value = "";
+    }
+  }
+  #removeAll() {
+    // empty workouts array
+    this.#workouts = [];
+    // if child exists in workout container keep removing them
+    while (workoutContainer.firstChild) {
+      workoutContainer.firstChild.remove();
     }
   }
 }
 
 const app = new App();
-formSelect.addEventListener("change", function () {});

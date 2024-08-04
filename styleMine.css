@@ -65,6 +65,10 @@ body {
   top: 20%;
   right: 5%;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  gap: 1rem;
 }
 
 .workout-stats {
@@ -190,4 +194,10 @@ body {
 
 .cycling-popup {
   border-left: 5px solid var(--color-brand--1);
+}
+.remove-all {
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
 }
