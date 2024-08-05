@@ -9,6 +9,7 @@ const formSelect = document.querySelector(".input-select");
 const workoutContainer = document.querySelector(".workout-container");
 const workoutElement = document.querySelector(".workout");
 const removeAll = document.querySelector(".remove-all");
+const inputID = document.querySelector(".input-id");
 
 const workoutRemover = document.querySelector(".workout-delete");
 
@@ -122,6 +123,7 @@ class App {
     const type = formSelect.value;
     const distance = +inputDistance.value;
     const duration = +inputDuration.value;
+    const id = inputID.value;
     const { lat, lng } = this.#mapEvent.latlng;
     let workout;
 
@@ -150,8 +152,16 @@ class App {
       workout = new Cycling([lat, lng], distance, duration, elevation);
     }
 
-    this.#workouts.push(workout);
-    console.log(workout);
+    // here we are checking if the workout is beign edited or not
+    // check if workout with this id exists
+    if (id) {
+      // get index in #workouts array by workouts id
+      const workoutIndex = this.#workouts.findIndex((work) => (work.id = id));
+      // change old workouts value with the new one
+      this.#workouts[workoutIndex] = workout;
+      // delete old workout on the workouts container
+      document.querySelector(`[data-id="${id}"]`).remove();
+    } else this.#workouts.push(workout);
 
     this.#renderWorkoutMarker(workout);
 
@@ -334,19 +344,25 @@ class App {
       );
       // remove the element from the DOM
       workoutEl.remove();
+
+      // remove marker
     }
   }
   #editWorkout(e) {
     e.stopPropagation();
 
+    // find workout element that is clicked
     const workoutEl = e.target.closest(".workout");
+    // guard clause
     if (!workoutEl || !e.target.classList.contains("workout-edit")) return;
-    console.log(workoutEl);
+    // find the workout object that we want to edit
     const workout = this.#workouts.find(
       (work) => workoutEl.dataset.id === work.id
     );
+    // show form
     form.classList.remove("hidden");
 
+    // populate input fields of the form with data from the workout that is beign edited
     inputDistance.value = workout.distance;
     inputDuration.value = workout.duration;
     formSelect.value = workout.type;
@@ -358,14 +374,20 @@ class App {
       inputElevation.value = workout.elevationGain;
       inputCadence.value = "";
     }
+
+    // populate hidden id field with workouts id
+    inputID.value = workout.id;
   }
   #removeAll() {
     // empty workouts array
     this.#workouts = [];
-    // if child exists in workout container keep removing them
-    while (workoutContainer.firstChild) {
-      workoutContainer.firstChild.remove();
-    }
+    // save every workout elemnt into an array
+    const workoutEls = document.querySelectorAll(".workout");
+    // guard clause
+    if (!workoutEls) return;
+    // remove every element from an array
+    workoutEls.forEach((work) => work.remove());
+    // TO add deleting markers, do something with the form if some workout is beign edited
   }
 }
 
