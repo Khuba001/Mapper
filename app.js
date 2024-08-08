@@ -56,12 +56,12 @@ class App {
   #mapZoomLevel = 13;
   #mapEvent;
   #workouts = [];
+  #markers = [];
   constructor() {
     this.#getPostion();
     form.addEventListener("submit", this.#newWorkout.bind(this));
     formSelect.addEventListener("change", this.#toggleElevatationField);
     workoutContainer.addEventListener("click", this.#moveToPopup.bind(this));
-    workoutContainer.addEventListener("click", this.#removeWorkout.bind(this));
     workoutContainer.addEventListener("click", this.#removeWorkout.bind(this));
     workoutContainer.addEventListener("click", this.#editWorkout.bind(this));
     removeAll.addEventListener("click", this.#removeAll.bind(this));
@@ -183,19 +183,21 @@ class App {
       }`;
     };
 
-    L.marker(workout.coords)
-      .addTo(this.#map)
-      .bindPopup(
-        L.popup({
-          maxWidth: 250,
-          minWidth: 100,
-          autoClose: false,
-          closeOnClick: false,
-          className: `${workout.type}-popup`,
-        })
-      )
-      .setPopupContent(formatString())
-      .openPopup();
+    this.#markers.push(
+      L.marker(workout.coords)
+        .addTo(this.#map)
+        .bindPopup(
+          L.popup({
+            maxWidth: 250,
+            minWidth: 100,
+            autoClose: false,
+            closeOnClick: false,
+            className: `${workout.type}-popup`,
+          })
+        )
+        .setPopupContent(formatString())
+        .openPopup()
+    );
   }
 
   #renderWorkout(workout) {
@@ -238,7 +240,7 @@ class App {
               <div class="workout-stat">
                 <p class="workout-stat">
                   <span class="workout-icon">🦶</span
-                  ><span class="workout-value">${workout.pace}</span>
+                  ><span class="workout-value">${workout.pace.toFixed(2)}</span>
                   <span class="workout-unit">SPM</span>
                 </p>
               </div>
@@ -281,7 +283,9 @@ class App {
               <div class="workout-stat">
                 <p class="workout-stat">
                   <span class="workout-icon">⛰</span
-                  ><span class="workout-value">${workout.elevationGain}</span>
+                  ><span class="workout-value">${workout.elevationGain.toFixed(
+                    2
+                  )}</span>
                   <span class="workout-unit">M</span>
                 </p>
               </div>
@@ -322,6 +326,7 @@ class App {
       inputDistance.value =
       inputDuration.value =
       inputElevation.value =
+      inputID.value =
         "";
 
     // hide a form after creating a workout
@@ -338,6 +343,9 @@ class App {
       // guard clause
       if (!workoutEl) return;
 
+      const workout = this.#workouts.find(
+        (workout) => workout.id == workoutEl.dataset.id
+      );
       // update #workouts array with the ones that do not match the condition, and delete the one that matches it
       this.#workouts = this.#workouts.filter(
         (workout) => workout.id !== workoutEl.dataset.id
@@ -345,7 +353,21 @@ class App {
       // remove the element from the DOM
       workoutEl.remove();
 
-      // remove marker
+      // find the right marker, this will be nessecary for deleting it from the map
+      const marker = this.#markers.find(
+        (marker) =>
+          marker._latlng.lat === workout.coords[0] &&
+          marker._latlng.lng === workout.coords[1]
+      );
+      // remove the marker from the #markers array
+
+      this.#markers = this.#markers.filter(
+        (marker) =>
+          marker._latlng.lat !== workout.coords[0] &&
+          marker._latlng.lng !== workout.coords[1]
+      );
+
+      this.#map.removeLayer(marker);
     }
   }
   #editWorkout(e) {
@@ -387,7 +409,13 @@ class App {
     if (!workoutEls) return;
     // remove every element from an array
     workoutEls.forEach((work) => work.remove());
-    // TO add deleting markers, do something with the form if some workout is beign edited
+    //
+    // remove every marker from the map
+    this.#markers.forEach((marker) => {
+      this.#map.removeLayer(marker);
+    });
+    // remove markers from array
+    this.#markers = [];
   }
 }
 
