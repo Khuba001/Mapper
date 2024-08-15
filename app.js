@@ -12,6 +12,9 @@ const removeAll = document.querySelector(".remove-all");
 const inputID = document.querySelector(".input-id");
 
 const workoutRemover = document.querySelector(".workout-delete");
+const btnSort = document.querySelector(".btn-sort");
+const sortList = document.querySelector(".list-sort");
+const btnSortDistance = document.querySelector(".btn-sort-distance");
 
 class Workout {
   date = new Date();
@@ -65,6 +68,8 @@ class App {
     workoutContainer.addEventListener("click", this.#removeWorkout.bind(this));
     workoutContainer.addEventListener("click", this.#editWorkout.bind(this));
     removeAll.addEventListener("click", this.#removeAll.bind(this));
+    btnSort.addEventListener("click", this.#showSorts);
+    btnSortDistance.addEventListener("click", this.#sortByDistance.bind(this));
   }
 
   #getPostion() {
@@ -372,7 +377,7 @@ class App {
   }
   #editWorkout(e) {
     e.stopPropagation();
-
+    console.log("siema");
     // find workout element that is clicked
     const workoutEl = e.target.closest(".workout");
     // guard clause
@@ -416,6 +421,20 @@ class App {
     });
     // remove markers from array
     this.#markers = [];
+  }
+
+  #showSorts() {
+    sortList.classList.toggle("hidden");
+  }
+  #sortByDistance() {
+    // sort workout by the highest distance value
+    this.#workouts.sort((a, b) => b.distance - a.distance);
+    // refresh and render sorted workouts
+    // clear workouts containera
+    const workoutsEls = document.querySelectorAll(".workout");
+    workoutsEls.forEach((workout) => workout.remove());
+    // render all the workouts again
+    this.#workouts.forEach((workout) => this.#renderWorkout(workout));
   }
 }
 
