@@ -14,7 +14,8 @@ const inputID = document.querySelector(".input-id");
 const workoutRemover = document.querySelector(".workout-delete");
 const btnSort = document.querySelector(".btn-sort");
 const sortList = document.querySelector(".list-sort");
-const btnSortDistance = document.querySelector(".btn-sort-distance");
+const btnSortDistanceDesc = document.querySelector(".btn-sort-distance-desc");
+const btnSortDistanceAsc = document.querySelector(".btn-sort-distance-asc");
 
 class Workout {
   date = new Date();
@@ -69,7 +70,14 @@ class App {
     workoutContainer.addEventListener("click", this.#editWorkout.bind(this));
     removeAll.addEventListener("click", this.#removeAll.bind(this));
     btnSort.addEventListener("click", this.#showSorts);
-    btnSortDistance.addEventListener("click", this.#sortByDistance.bind(this));
+    btnSortDistanceDesc.addEventListener(
+      "click",
+      this.#sortByDistanceDesc.bind(this)
+    );
+    btnSortDistanceAsc.addEventListener(
+      "click",
+      this.#sortByDistanceAsc.bind(this)
+    );
   }
 
   #getPostion() {
@@ -426,15 +434,23 @@ class App {
   #showSorts() {
     sortList.classList.toggle("hidden");
   }
-  #sortByDistance() {
-    // sort workout by the highest distance value
-    this.#workouts.sort((a, b) => b.distance - a.distance);
-    // refresh and render sorted workouts
-    // clear workouts containera
+  #renderSortedWorkouts() {
     const workoutsEls = document.querySelectorAll(".workout");
     workoutsEls.forEach((workout) => workout.remove());
     // render all the workouts again
     this.#workouts.forEach((workout) => this.#renderWorkout(workout));
+  }
+  #sortByDistanceDesc() {
+    // sort workout by the highest distance value
+    this.#workouts.sort((a, b) => b.distance - a.distance);
+    // refresh and render sorted workouts
+    // clear workouts containera
+    this.#renderSortedWorkouts();
+  }
+  #sortByDistanceAsc() {
+    this.#workouts.sort((a, b) => a.distance - b.distance);
+
+    this.#renderSortedWorkouts();
   }
 }
 

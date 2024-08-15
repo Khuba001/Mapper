@@ -228,7 +228,8 @@ body {
   right: 18%;
 }
 
-.btn-sort-distance {
+.btn-sort-distance-desc,
+.btn-sort-distance-asc {
   border: none;
   background-color: var(--color-dark--2);
   color: #fff;
