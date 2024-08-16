@@ -16,6 +16,7 @@ const btnSort = document.querySelector(".btn-sort");
 const sortList = document.querySelector(".list-sort");
 const btnSortDistanceDesc = document.querySelector(".btn-sort-distance-desc");
 const btnSortDistanceAsc = document.querySelector(".btn-sort-distance-asc");
+const btnZoom = document.querySelector(".btn-zoom");
 
 class Workout {
   date = new Date();
@@ -61,6 +62,7 @@ class App {
   #mapEvent;
   #workouts = [];
   #markers = [];
+  #bounds = new L.LatLngBounds();
   constructor() {
     this.#getPostion();
     form.addEventListener("submit", this.#newWorkout.bind(this));
@@ -78,6 +80,7 @@ class App {
       "click",
       this.#sortByDistanceAsc.bind(this)
     );
+    btnZoom.addEventListener("click", this.#ZoomToMarkers.bind(this));
   }
 
   #getPostion() {
@@ -211,6 +214,7 @@ class App {
         .setPopupContent(formatString())
         .openPopup()
     );
+    this.#markers.forEach((marker) => this.#bounds.extend(marker.getLatLng()));
   }
 
   #renderWorkout(workout) {
@@ -451,6 +455,9 @@ class App {
     this.#workouts.sort((a, b) => a.distance - b.distance);
 
     this.#renderSortedWorkouts();
+  }
+  #ZoomToMarkers() {
+    this.#map.fitBounds(this.#bounds);
   }
 }
 

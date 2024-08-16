@@ -212,7 +212,8 @@ body {
   text-align: center;
   cursor: pointer;
 }
-.btn-sort {
+.btn-sort,
+.btn-zoom {
   background-color: none;
   border: none;
   background-color: var(--color-dark--1);
