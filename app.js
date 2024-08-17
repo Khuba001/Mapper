@@ -13,9 +13,11 @@ const inputID = document.querySelector(".input-id");
 
 const workoutRemover = document.querySelector(".workout-delete");
 const btnSort = document.querySelector(".btn-sort");
-const sortList = document.querySelector(".list-sort");
+const sortList = document.querySelector(".sort-container");
 const btnSortDistanceDesc = document.querySelector(".btn-sort-distance-desc");
-const btnSortDistanceAsc = document.querySelector(".btn-sort-distance-asc");
+const btnSortDate = document.querySelector(".btn-sort-date");
+const btnSortDuration = document.querySelector(".btn-sort-duration");
+const btnSortSpeed = document.querySelector(".btn-sort-velocity");
 const btnZoom = document.querySelector(".btn-zoom");
 
 class Workout {
@@ -62,7 +64,18 @@ class App {
   #mapEvent;
   #workouts = [];
   #markers = [];
+  // Create bounds object
   #bounds = new L.LatLngBounds();
+  #greenIcon = new L.Icon({
+    iconUrl:
+      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png",
+    shadowUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  });
   constructor() {
     this.#getPostion();
     form.addEventListener("submit", this.#newWorkout.bind(this));
@@ -74,12 +87,15 @@ class App {
     btnSort.addEventListener("click", this.#showSorts);
     btnSortDistanceDesc.addEventListener(
       "click",
-      this.#sortByDistanceDesc.bind(this)
+      this.#sortWorkout.bind(this, "distance")
     );
-    btnSortDistanceAsc.addEventListener(
+    btnSortDate.addEventListener("click", this.#sortWorkout.bind(this, "date"));
+    btnSortDuration.addEventListener(
       "click",
-      this.#sortByDistanceAsc.bind(this)
+      this.#sortWorkout.bind(this, "duration")
     );
+    // btnSortSpeed.addEventListener('click',this.#sortWorkout.bind(this, `${this.workout}`))
+
     btnZoom.addEventListener("click", this.#ZoomToMarkers.bind(this));
   }
 
@@ -100,10 +116,19 @@ class App {
 
     this.#map = L.map("map").setView(coords, this.#mapZoomLevel);
 
-    L.tileLayer("https://tile.openstreetmap.fr/hot//{z}/{x}/{y}.png", {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(this.#map);
+    L.tileLayer(
+      "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}",
+      {
+        attribution:
+          'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: "mapbox/dark-v10",
+        tileSize: 512,
+        zoomOffset: -1,
+        accessToken:
+          "pk.eyJ1IjoiYmxhY2tib3gxMSIsImEiOiJjbDF3OGxkYWIwMzcwM2pwOHQwMXQ2OGM0In0.6KQYul7J6Vbh4edRpmgIaA",
+      }
+    ).addTo(this.#map);
 
     this.#map.on("click", this.#showForm.bind(this));
   }
@@ -200,7 +225,7 @@ class App {
     };
 
     this.#markers.push(
-      L.marker(workout.coords)
+      L.marker(workout.coords, { icon: this.#greenIcon })
         .addTo(this.#map)
         .bindPopup(
           L.popup({
@@ -214,6 +239,7 @@ class App {
         .setPopupContent(formatString())
         .openPopup()
     );
+    // push the markers to the bounds object
     this.#markers.forEach((marker) => this.#bounds.extend(marker.getLatLng()));
   }
 
@@ -399,7 +425,7 @@ class App {
       (work) => workoutEl.dataset.id === work.id
     );
     // show form
-    form.classList.remove("hidden");
+    form.classList.toggle("hidden");
 
     // populate input fields of the form with data from the workout that is beign edited
     inputDistance.value = workout.distance;
@@ -437,6 +463,7 @@ class App {
 
   #showSorts() {
     sortList.classList.toggle("hidden");
+    sortList.classList.toggle("active");
   }
   #renderSortedWorkouts() {
     const workoutsEls = document.querySelectorAll(".workout");
@@ -444,19 +471,17 @@ class App {
     // render all the workouts again
     this.#workouts.forEach((workout) => this.#renderWorkout(workout));
   }
-  #sortByDistanceDesc() {
-    // sort workout by the highest distance value
-    this.#workouts.sort((a, b) => b.distance - a.distance);
+
+  #sortWorkout(property) {
+    this.#workouts.sort((a, b) => b[property] - a[property]);
     // refresh and render sorted workouts
     // clear workouts containera
     this.#renderSortedWorkouts();
   }
-  #sortByDistanceAsc() {
-    this.#workouts.sort((a, b) => a.distance - b.distance);
 
-    this.#renderSortedWorkouts();
-  }
   #ZoomToMarkers() {
+    if (this.#workouts.length === 0) return;
+    // set the view on the entire bounds, so all the markers
     this.#map.fitBounds(this.#bounds);
   }
 }

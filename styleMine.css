@@ -1,8 +1,8 @@
 :root {
   --color-brand--1: #ffb545;
-  --color-brand--2: #00c46a;
+  --color-brand--2: #6a06de;
 
-  --color-dark--1: #2d3439;
+  --color-dark--1: #363d43;
   --color-dark--2: #42484d;
   --color-light--1: #aaa;
   --color-light--2: #ececec;
@@ -168,9 +168,6 @@ body {
 .form__btn {
   display: none;
 }
-.hidden {
-  display: none;
-}
 
 .leaflet-popup .leaflet-popup-content-wrapper {
   background: var(--color-dark--1);
@@ -203,6 +200,8 @@ body {
   gap: 3rem;
   position: relative;
   padding: 2rem;
+  background-color: var(--color-dark--2);
+  border-radius: 5px 5px 0 0;
   margin-bottom: 2rem;
 }
 
@@ -216,26 +215,50 @@ body {
 .btn-zoom {
   background-color: none;
   border: none;
-  background-color: var(--color-dark--1);
+  background-color: var(--color-dark--2);
   color: #fff;
   font-weight: 700;
   font-size: 1.4rem;
   cursor: pointer;
 }
+.sort-container {
+  margin-top: -2rem;
+  padding: 1rem;
+  background-color: var(--color-dark--2);
+  border-radius: 0 0 5px 5px;
+  margin-bottom: 2rem;
+  transition: all 0.4s;
+  opacity: 0;
+  transition-behavior: allow-discrete;
+}
 .list-sort {
   list-style-type: none;
-  position: absolute;
-  top: 65%;
-  right: 18%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
 }
 
-.btn-sort-distance-desc,
-.btn-sort-distance-asc {
+.btn-sort-by {
   border: none;
   background-color: var(--color-dark--2);
   color: #fff;
   padding: 0.3rem;
   border-radius: 4px;
+
   font-weight: 700;
   cursor: pointer;
+}
+
+.active {
+  transform: translateY(0.5rem);
+  opacity: 1;
+  display: block;
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+.hidden {
+  display: none;
 }

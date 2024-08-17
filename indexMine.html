@@ -27,20 +27,36 @@
     <div class="app">
       <div class="menu">
         <div class="logo">
-          <img class="logo-img" src="logo.png" alt="logo of mapty" />
+          <img class="logo-img" src="logoMapek.png" alt="logo of mapty" />
         </div>
         <div class="workouts-actions">
           <p class="remove-all">Remove All</p>
           <button type="button" class="btn-sort">Sort</button>
-          <ul class="list-sort hidden">
+
+          <button class="btn-zoom">Zoom Out</button>
+        </div>
+        <div class="sort-container hidden">
+          <ul class="list-sort">
             <li class="list-sort-item">
-              <button class="btn-sort-distance-desc">By Distance &darr;</button>
+              <button class="btn-sort-by btn-sort-distance-desc">
+                Distance &darr;
+              </button>
+            </li>
+
+            <li class="list-sort-item">
+              <button class="btn-sort-by btn-sort-date">Date &darr;</button>
             </li>
             <li class="list-sort-item">
-              <button class="btn-sort-distance-asc">By Distance &uarr;</button>
+              <button class="btn-sort-by btn-sort-duration">
+                Duration &darr;
+              </button>
+            </li>
+            <li class="list-sort-item">
+              <button class="btn-sort-by btn-sort-velocity">
+                Velocity &darr;
+              </button>
             </li>
           </ul>
-          <button class="btn-zoom">Zoom Out</button>
         </div>
         <div class="workout-container">
           <div class="form hidden">
@@ -158,8 +174,9 @@
         <div class="copyright">
           <p class="copyright-text">
             &copy; Copyright by
-            <span class="author-name">Jonas Schmedtmann</span>. Use for learning
-            or your portfolio. Don't use to teach. Don't claim as your own.
+            <span class="author-name">Jakub Lewiński</span>. This project is a
+            complete refactoring of 'Mapty' App by
+            <span class="author-name">Jonas Schmedtmann</span>.
           </p>
         </div>
       </div>
