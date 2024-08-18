@@ -78,6 +78,7 @@ class App {
   });
   constructor() {
     this.#getPostion();
+    this.#getLocalStorage();
     form.addEventListener("submit", this.#newWorkout.bind(this));
     formSelect.addEventListener("change", this.#toggleElevatationField);
     workoutContainer.addEventListener("click", this.#moveToPopup.bind(this));
@@ -131,6 +132,8 @@ class App {
     ).addTo(this.#map);
 
     this.#map.on("click", this.#showForm.bind(this));
+
+    this.#workouts.forEach((workout) => this.#renderWorkoutMarker(workout));
   }
 
   #showForm(mapE) {
@@ -209,6 +212,8 @@ class App {
     this.#renderWorkout(workout);
 
     this.#hideForm();
+
+    this.#setLocalStorage();
   }
 
   #renderWorkoutMarker(workout) {
@@ -223,6 +228,10 @@ class App {
           : `🚴‍♂️ Cycling on ${this.formatDate(workout)}`
       }`;
     };
+    if (!this.#map) {
+      console.error("Map is not initialized.");
+      return;
+    }
 
     this.#markers.push(
       L.marker(workout.coords, { icon: this.#greenIcon })
@@ -255,8 +264,8 @@ class App {
               )}</span>
             </p>
             <div class='workout-options'>
-              <div class='workout-delete'>❌</div>
-              <div class='workout-edit'>📜</div>
+              <ion-icon class="icon workout-delete" name="close-outline"></ion-icon>
+             <ion-icon class="icon workout-edit" name="create-outline"></ion-icon>
             </div>
             <div class="workout-stats">
               <div class="workout-stats-container">
@@ -298,8 +307,8 @@ class App {
               )}</span>
             </p>
             <div class='workout-options'>
-              <div class='workout-delete'>❌</div>
-              <div class='workout-edit'>📜</div>
+             <ion-icon class="icon workout-delete" name="close-outline"></ion-icon>
+             <ion-icon class="icon workout-edit" name="create-outline"></ion-icon>
             </div>
             <div class="workout-stats">
               <div class="workout-stats-container">
@@ -483,6 +492,23 @@ class App {
     if (this.#workouts.length === 0) return;
     // set the view on the entire bounds, so all the markers
     this.#map.fitBounds(this.#bounds);
+  }
+
+  #setLocalStorage() {
+    localStorage.setItem("workouts", JSON.stringify(this.#workouts));
+  }
+  #getLocalStorage() {
+    const data = JSON.parse(localStorage.getItem("workouts"));
+    if (!data) return;
+
+    this.#workouts = data;
+
+    this.#workouts = data.map((workout) => {
+      workout.date = new Date(workout.date);
+      return workout;
+    });
+
+    this.#workouts.forEach((workout) => this.#renderWorkout(workout));
   }
 }
 

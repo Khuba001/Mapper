@@ -58,16 +58,16 @@ body {
   border-radius: 0 5px 5px 0;
   position: relative;
   overflow: hidden;
+  transition: all 0.3s;
 }
 
 .workout-options {
   position: absolute;
-  top: 20%;
+  top: 15%;
   right: 5%;
   cursor: pointer;
   display: flex;
   align-items: center;
-  font-size: 1.5rem;
   gap: 1rem;
 }
 
@@ -212,7 +212,8 @@ body {
   cursor: pointer;
 }
 .btn-sort,
-.btn-zoom {
+.btn-zoom,
+.btn-remove-all {
   background-color: none;
   border: none;
   background-color: var(--color-dark--2);
@@ -220,7 +221,12 @@ body {
   font-weight: 700;
   font-size: 1.4rem;
   cursor: pointer;
+  transition: all 0.3s;
 }
+.workouts-actions button:hover {
+  color: var(--color-light--1);
+}
+
 .sort-container {
   margin-top: -2rem;
   padding: 1rem;
@@ -261,4 +267,13 @@ body {
 }
 .hidden {
   display: none;
+}
+.icon {
+  width: 1.8rem;
+  height: 1.8rem;
+  transition: all 0.3s;
+}
+
+.icon:hover {
+  transform: scale(150%);
 }
